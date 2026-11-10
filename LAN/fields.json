@@ -1,0 +1,28 @@
+{
+  "x": {"type": "double", "default": 0, "readable": true, "writable": true, "streamable": true},
+  "y": {"type": "double", "default": 0, "readable": true, "writable": true, "streamable": true},
+  "z": {"type": "double", "default": 0, "readable": true, "writable": true, "streamable": true},
+  "roll": {"type": "double", "default": 0, "readable": true, "writable": true, "streamable": true},
+  "pitch": {"type": "double", "default": 0, "readable": true, "writable": true, "streamable": true},
+  "yaw": {"type": "double", "default": 0, "readable": true, "writable": true, "streamable": true},
+  "speed": {"type": "double", "default": 0.0, "readable": true, "writable": true, "streamable": true},
+  "fuel_tank_1": {"type": "double", "default": 0.0, "readable": true, "writable": true, "streamable": true},
+  "fuel_tank_2": {"type": "double", "default": 0.0, "readable": true, "writable": true, "streamable": true},
+  "cockpit_temp": {"type": "double", "default": 0.0, "readable": true, "writable": true, "streamable": false},
+  "air_temp": {"type": "double", "default": 0.0, "readable": true, "writable": true, "streamable": false},
+  "year": {"type": "int", "default": 2026, "readable": true, "writable": true},
+  "month": {"type": "int", "default": 1, "readable": true, "writable": true},
+  "day": {"type": "int", "default": 1, "readable": true, "writable": true},
+  "hour": {"type": "int", "default": 0, "readable": true, "writable": true},
+  "second": {"type": "int", "default": 0, "readable": true, "writable": true},
+  "weather": {
+    "type": "enum",
+    "values": ["sunny", "cloudly", "rain", "snow", "storm"],
+    "default": "sunny",
+    "readable": true,
+    "writable": true
+  },
+  "A_Bypass": {"type": "bool", "default": false, "readable": true, "writable": true},
+  "B_Bypass": {"type": "bool", "default": false, "readable": true, "writable": true},
+  "C_Bypass": {"type": "bool", "default": false, "readable": true, "writable": true}
+}

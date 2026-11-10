@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Data Server Console</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <main class="workspace">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">DATA SERVER / PROTOCOL V3</p>
+        <h1>Server Console</h1>
+      </div>
+      <div class="connection">
+        <span id="status" class="status" role="status"><i></i><span>Disconnected</span></span>
+        <a class="button-link" href="/" target="_blank" rel="noopener" aria-label="New client in a new tab">New client</a>
+        <button id="connect" class="primary">Connect</button>
+      </div>
+    </header>
+
+    <p id="notice" class="notice" role="alert" hidden></p>
+
+    <div class="dashboard">
+      <aside class="panel catalog" aria-labelledby="catalog-title">
+        <div class="section-head">
+          <h2 id="catalog-title">Data catalog</h2>
+        </div>
+        <p id="catalog-empty" class="empty">Connect to see all fields and groups.</p>
+        <div id="catalog-content" hidden>
+          <h3 class="catalog-heading" id="fields-title">Fields <span class="count" id="field-count"></span></h3>
+          <ul id="catalog-fields" class="catalog-list" aria-labelledby="fields-title" tabindex="0"></ul>
+          <h3 class="catalog-heading" id="groups-title">Groups <span class="count" id="group-count"></span></h3>
+          <ul id="catalog-groups" class="catalog-list" aria-labelledby="groups-title" tabindex="0"></ul>
+        </div>
+      </aside>
+      <div class="dashboard-main">
+        <section class="panel controls" aria-labelledby="controls-title">
+          <div class="section-head">
+            <h2 id="controls-title">Quick commands</h2>
+            <div class="actions">
+              <button data-command="PING" data-online disabled>Ping</button>
+              <button data-command="SCHEMA" data-online disabled>Schema</button>
+              <button data-command="GET *" data-online disabled>Read all</button>
+            </div>
+          </div>
+          <div class="control-grid">
+            <form id="read-form">
+              <label for="read-field">Read a field or group</label>
+              <div class="input-row">
+                <div class="search-wrap">
+                  <input id="read-field" type="search" role="combobox" aria-autocomplete="list"
+                         aria-controls="read-suggestions" aria-expanded="false" placeholder="Search fields or groups"
+                         autocomplete="off" spellcheck="false" required data-online disabled>
+                  <ul id="read-suggestions" class="suggestions" role="listbox" hidden></ul>
+                </div>
+                <button data-online disabled>Read</button>
+              </div>
+            </form>
+            <form id="write-form">
+              <label for="write-field">Write a field</label>
+              <div class="input-row write-row">
+                <div class="search-wrap">
+                  <input id="write-field" type="search" role="combobox" aria-autocomplete="list"
+                         aria-controls="write-suggestions" aria-expanded="false" placeholder="Search fields"
+                         autocomplete="off" spellcheck="false" required data-online disabled>
+                  <ul id="write-suggestions" class="suggestions" role="listbox" hidden></ul>
+                </div>
+                <input id="write-value" aria-label="New field value" placeholder="Value" required data-online disabled>
+                <button data-online disabled>Set</button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <section class="panel udp-panel" aria-labelledby="publish-title">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">UDP / SEND</p>
+              <h2 id="publish-title">Publications <span id="publication-count" class="count">0</span></h2>
+            </div>
+          </div>
+          <form id="publish-form" class="udp-form">
+            <label for="publish-group">Publish a writable group</label>
+            <div class="input-row">
+              <div class="search-wrap">
+                <input id="publish-group" type="search" role="combobox" aria-autocomplete="list"
+                       aria-controls="publish-suggestions" aria-expanded="false" placeholder="Search writable groups"
+                       autocomplete="off" spellcheck="false" required data-online disabled>
+                <ul id="publish-suggestions" class="suggestions" role="listbox" hidden></ul>
+              </div>
+            </div>
+            <label class="starting-values-label" for="publish-values">Starting values (optional)</label>
+            <div class="input-row">
+              <input id="publish-values" placeholder="name=value" aria-describedby="publish-values-help"
+                     autocomplete="off" spellcheck="false" data-online disabled>
+              <button data-online disabled>Publish</button>
+            </div>
+            <p id="publish-values-help" class="stream-meta">Leave blank to start with the current values of a readable group.</p>
+          </form>
+          <div id="publications"></div>
+          <p id="empty-publications" class="empty">No active publications. Publish a group to reserve its fields and send UDP samples.</p>
+          <p id="sample-note" class="empty" hidden>Publish starts sending at 60 Hz. Apply values to update the stream. Pause keeps the group reserved. The server counts accepted packets in 10-second windows from the time you published.</p>
+        </section>
+
+        <section class="panel udp-panel" aria-labelledby="streams-title">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">UDP / LIVE</p>
+              <h2 id="streams-title">Subscriptions <span id="count" class="count">0</span></h2>
+            </div>
+            <button id="stop-all" disabled>Stop all</button>
+          </div>
+          <form id="sub-form" class="udp-form">
+            <label for="sub-group">Start a UDP subscription</label>
+            <div class="input-row">
+              <div class="search-wrap">
+                <input id="sub-group" type="search" role="combobox" aria-autocomplete="list"
+                       aria-controls="sub-suggestions" aria-expanded="false" placeholder="Search streamable groups"
+                       autocomplete="off" spellcheck="false" required data-online disabled>
+                <ul id="sub-suggestions" class="suggestions" role="listbox" hidden></ul>
+              </div>
+              <button data-online disabled>Subscribe</button>
+            </div>
+          </form>
+          <div id="streams" class="stream-list"></div>
+          <p id="empty-streams" class="empty">No active subscriptions. Select a group above to start receiving live values.</p>
+        </section>
+
+        <section class="panel reply-panel" aria-labelledby="replies-title">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">TCP / REQUEST &amp; RESPONSE</p>
+              <h2 id="replies-title">One-time replies</h2>
+            </div>
+            <button id="clear">Clear</button>
+          </div>
+          <div id="replies" class="reply-list" role="log" aria-label="Server replies" tabindex="0"></div>
+          <p id="empty-replies" class="empty">Replies to manual and quick commands will appear here.</p>
+        </section>
+      </div>
+      <aside class="panel guide" aria-labelledby="guide-title">
+        <div class="section-head"><h2 id="guide-title">Guide</h2></div>
+        <p class="guide-intro">Enter one TCP command at a time in the prompt below.</p>
+        <dl class="guide-list">
+          <div><dt><code>PING</code></dt><dd>Check the connection. The server replies <code>OK PONG</code>.</dd></div>
+          <div><dt><code>SCHEMA</code></dt><dd>List fields, types, and permissions. <code>S</code> means stream, <code>R</code> read, and <code>W</code> write.</dd></div>
+          <div><dt><code>GET &lt;field or group&gt;</code></dt><dd>Read current values once. Try <code>GET position</code> or <code>GET *</code> for all readable fields.</dd></div>
+          <div><dt><code>SET &lt;field&gt;=&lt;value&gt;</code></dt><dd>Write a value over TCP. Separate multiple assignments with spaces to apply them together.</dd></div>
+          <div><dt><code>SUB &lt;port&gt; &lt;group&gt;</code></dt><dd>Receive live UDP updates. Use the receive port shown above the command prompt.</dd></div>
+          <div><dt><code>UNSUB &lt;group&gt;</code></dt><dd>Stop one subscription. <code>SUB false</code> stops all subscriptions in this tab.</dd></div>
+          <div><dt><code>PUBLISH &lt;group&gt;</code></dt><dd>Reserve a writable group for UDP uploads. Try <code>PUBLISH speed</code>.</dd></div>
+          <div><dt><code>PUBSTATUS</code></dt><dd>Show accepted UDP packets per publication in its last completed 10-second window.</dd></div>
+          <div><dt><code>UNPUBLISH &lt;group&gt;</code></dt><dd>Stop an upload and release its fields for other writers.</dd></div>
+          <div><dt><code>SAMPLE &lt;token&gt; &lt;seq&gt; &lt;field&gt;=&lt;value&gt;</code></dt><dd>UDP only. Clicking <strong>Publish</strong> sends values for the whole group continuously at 60 Hz.</dd></div>
+        </dl>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="command-bar">
+    <form id="command-form" class="workspace prompt">
+      <div class="prompt-label">
+        <label for="command">Command prompt</label>
+        <span id="udp-port">UDP port assigned on connect</span>
+      </div>
+      <div class="input-row">
+        <span aria-hidden="true" class="chevron">›</span>
+        <input id="command" placeholder="GET position" autocomplete="off" spellcheck="false" required data-online disabled>
+        <button class="primary" data-online disabled>Send</button>
+      </div>
+    </form>
+  </footer>
+</body>
+</html>

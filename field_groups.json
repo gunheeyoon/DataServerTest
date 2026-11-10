@@ -1,0 +1,11 @@
+{
+  "x": ["x"],
+  "y": ["y"],
+  "z": ["z"],
+  "speed": ["speed"],
+  "fuel_tank_1": ["fuel_tank_1"],
+  "fuel_tank_2": ["fuel_tank_2"],
+  "position": ["x", "y", "z"],
+  "attitude": ["roll", "pitch", "yaw"],
+  "calendar": ["year", "month", "day"]
+}
